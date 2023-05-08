@@ -1,0 +1,47 @@
+---
+# Upgrade RHEL family OS packages
+- name: Upgrade RHEL Family OS packages
+  ansible.builtin.yum:
+    name: '*'
+    state: latest
+    exclude:
+      - python3
+  when: ansible_os_family == "RedHat"
+  notify:
+    - Reboot host
+
+- name: Remove old kernels from the CentOS keeping only the last most recent two 
+  ansible.builtin.command: /usr/bin/package-cleanup --oldkernels --count=2 -y
+  when: ansible_os_family == "RedHat"
+
+# Debian Family upgrade
+- name: Update repositories cache
+  ansible.builtin.apt:
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Disable upgrade python3
+  ansible.builtin.dpkg_selections:
+    name: python3
+    selection: hold
+  when: ansible_os_family == "Debian"
+
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+  when: ansible_os_family == "Debian"
+
+- name: Upgrade the OS (apt-get dist-upgrade)
+  ansible.builtin.apt:
+    upgrade: dist
+  when: ansible_os_family == "Debian"
+  notify:
+    - Reboot host
+
+- name: Remove old kernels from the DebianOS keeping only the last most recent two
+  ansible.builtin.apt:
+    autoremove: yes
+    purge: yes
+  when: ansible_os_family == "Debian"
+...

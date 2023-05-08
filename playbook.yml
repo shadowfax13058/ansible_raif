@@ -1,0 +1,6 @@
+---
+- name: Upgrade and Reboot RHEL & Debian family Linux OS
+  hosts: servers
+  roles:
+    - update_os
+...

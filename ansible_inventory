@@ -1,0 +1,7 @@
+all:
+  children:
+    servers:
+      hosts:
+        example-01:  
+            ansible_host: 161.35.158.195
+            ansible_user: root
